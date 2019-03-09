@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  master-0:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3306:3306'
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=replication
+      - MARIADB_REPLICATION_PASSWORD=123456
+      - MARIADB_ROOT_PASSWORD=123456
+      - MARIADB_USER=sample
+      - MARIADB_PASSWORD=123456
+      - MARIADB_DATABASE=sample
+  slave-0-0:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3307:3306'
+    depends_on:
+      - master-0
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=replication
+      - MARIADB_REPLICATION_PASSWORD=123456
+      - MARIADB_MASTER_HOST=master-0
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=123456
+  slave-0-1:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3308:3306'
+    depends_on:
+      - master-0
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=replication
+      - MARIADB_REPLICATION_PASSWORD=123456
+      - MARIADB_MASTER_HOST=master-0
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=123456
+  master-1:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3309:3306'
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=replication
+      - MARIADB_REPLICATION_PASSWORD=123456
+      - MARIADB_ROOT_PASSWORD=123456
+      - MARIADB_USER=sample
+      - MARIADB_PASSWORD=123456
+      - MARIADB_DATABASE=sample
+  slave-1-0:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3310:3306'
+    depends_on:
+      - master-1
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=replication
+      - MARIADB_REPLICATION_PASSWORD=123456
+      - MARIADB_MASTER_HOST=master-1
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=123456
+  slave-1-1:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3311:3306'
+    depends_on:
+      - master-1
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=replication
+      - MARIADB_REPLICATION_PASSWORD=123456
+      - MARIADB_MASTER_HOST=master-1
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=123456

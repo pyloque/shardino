@@ -1,0 +1,9 @@
+.project
+*.class
+.settings
+.classpath
+target
+.idea
+*.iml
+.DS_Store
+taiji-common/src/main/java/com/zhangyue/taiji/common/shardmysql
