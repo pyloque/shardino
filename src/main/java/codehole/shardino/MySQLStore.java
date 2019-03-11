@@ -77,6 +77,18 @@ public class MySQLStore {
         this.execute(consumer, true);
     }
 
+    public <T> void executeWithMapper(Class<T> mapperClass, MySQLOperation<T> consumer) {
+        this.executeWithMapper(mapperClass, consumer, true);
+    }
+
+    public <T> void executeWithMapper(Class<T> mapperClass, MySQLOperation<T> consumer,
+                    boolean autocommit) {
+        this.execute(session -> {
+            T mapper = session.getMapper(mapperClass);
+            consumer.accept(mapper);
+        }, autocommit);
+    }
+
     public void execute(MySQLOperation<SqlSession> consumer, boolean autocommit) {
         SqlSession session;
         try {
@@ -96,7 +108,7 @@ public class MySQLStore {
             session.close();
         }
     }
-    
+
     public void close() {
         this.ds.close();
     }

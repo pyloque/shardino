@@ -19,8 +19,7 @@ public class PostMySQL {
     public void createTables() {
         for (int i = 0; i < partitions.post(); i++) {
             int k = i;
-            mysql.master(k).execute(session -> {
-                PostMapper mapper = session.getMapper(PostMapper.class);
+            mysql.master(k).executeWithMapper(PostMapper.class, mapper -> {
                 mapper.createTable(k);
             });
         }
@@ -29,8 +28,7 @@ public class PostMySQL {
     public void dropTables() {
         for (int i = 0; i < partitions.post(); i++) {
             int k = i;
-            mysql.master(k).execute(session -> {
-                PostMapper mapper = session.getMapper(PostMapper.class);
+            mysql.master(k).executeWithMapper(PostMapper.class, mapper -> {
                 mapper.dropTable(k);
             });
         }
@@ -39,8 +37,7 @@ public class PostMySQL {
     public Post getPostFromMaster(String userId, String id) {
         Holder<Post> holder = new Holder<>();
         int partition = this.partitionFor(userId);
-        mysql.master(partition).execute(session -> {
-            PostMapper mapper = session.getMapper(PostMapper.class);
+        mysql.master(partition).executeWithMapper(PostMapper.class, mapper -> {
             holder.value(mapper.getPost(partition, id));
         });
         return holder.value();
@@ -49,8 +46,7 @@ public class PostMySQL {
     public Post getPostFromSlave(String userId, String id) {
         Holder<Post> holder = new Holder<>();
         int partition = this.partitionFor(userId);
-        mysql.slave(partition).execute(session -> {
-            PostMapper mapper = session.getMapper(PostMapper.class);
+        mysql.slave(partition).executeWithMapper(PostMapper.class, mapper -> {
             holder.value(mapper.getPost(partition, id));
         });
         return holder.value();
@@ -58,8 +54,7 @@ public class PostMySQL {
 
     public void savePost(Post post) {
         int partition = this.partitionFor(post);
-        mysql.master(partition).execute(session -> {
-            PostMapper mapper = session.getMapper(PostMapper.class);
+        mysql.master(partition).executeWithMapper(PostMapper.class, mapper -> {
             Post curPost = mapper.getPost(partition, post.getId());
             if (curPost != null) {
                 mapper.updatePost(partition, post);
@@ -71,8 +66,7 @@ public class PostMySQL {
 
     public void deletePost(String userId, String id) {
         int partition = this.partitionFor(userId);
-        mysql.master(partition).execute(session -> {
-            PostMapper mapper = session.getMapper(PostMapper.class);
+        mysql.master(partition).executeWithMapper(PostMapper.class, mapper -> {
             mapper.deletePost(partition, id);
         });
     }
